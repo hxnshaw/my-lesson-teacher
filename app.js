@@ -18,6 +18,4 @@ const start = async () => {
   }
 };
 
-console.log("1");
-
 start();
