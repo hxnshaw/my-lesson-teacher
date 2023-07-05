@@ -7,6 +7,14 @@ const app = express();
 //Database
 const connectDB = require("./db/connect");
 
+//Routers
+
+//NotFound and ErrorHandler Middlewares
+const notFoundMiddleware = require("./middlewares/not-found");
+const errorHandlerMiddleware = require("./middlewares/error");
+
+app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleware);
 const port = process.env.PORT || 2023;
 
 const start = async () => {
