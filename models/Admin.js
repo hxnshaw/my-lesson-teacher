@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-//const bcrypt = require("bcryptjs");
+const bcrypt = require("bcryptjs");
 
 const AdminSchema = new mongoose.Schema(
   {
@@ -31,5 +31,25 @@ const AdminSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+//Hash Admin Password
+AdminSchema.pre("save", async function () {
+  const admin = this;
+  if (!admin.isModified("password")) return;
+  const salt = await bcrypt.genSalt(10);
+  admin.password = await bcrypt.hash(admin.password, salt);
+});
+
+//Check if password is correct
+AdminSchema.methods.comparePassword = async function (adminPassword) {
+  const admin = this;
+  const isMatch = await bcrypt.compare(adminPassword, admin.password);
+
+  if (!isMatch) {
+    throw new Error("Invalid Credentials");
+  }
+
+  return isMatch;
+};
 
 module.exports = mongoose.model("Admin", AdminSchema);

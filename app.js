@@ -20,10 +20,11 @@ const xss = require("xss-clean");
 const connectDB = require("./db/connect");
 
 //Routers
+const adminRouter = require("./routes/adminRouter");
 
 //NotFound and ErrorHandler Middlewares
 const notFoundMiddleware = require("./middlewares/not-found");
-const errorHandlerMiddleware = require("./middlewares/error");
+const errorHandlerMiddleware = require("./middlewares/error-handler");
 
 //setup security
 app.set("trust proxy", 1);
@@ -44,6 +45,7 @@ app.use(cookieParser(process.env.JWT_SECRET_TOKEN));
 app.use(fileUpload({ useTempFiles: true }));
 
 //Setup Routers
+app.use("/api/v1/admin", adminRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
