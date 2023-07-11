@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-//const bcrypt = require("bcryptjs");
+const bcrypt = require("bcryptjs");
 
 const TeacherSchema = new mongoose.Schema(
   {
@@ -37,13 +37,28 @@ const TeacherSchema = new mongoose.Schema(
       type: String,
       default: "teacher",
     },
-    subjects: {
-      type: String,
-      required: [true, "Please Choose Areas of Expertise"],
-      enum: ["Physics", "Chemistry", "Government"],
-    },
   },
   { timestamps: true }
 );
+
+//Hash teacher Password
+TeacherSchema.pre("save", async function () {
+  const teacher = this;
+  if (!teacher.isModified("password")) return;
+  const salt = await bcrypt.genSalt(10);
+  teacher.password = await bcrypt.hash(teacher.password, salt);
+});
+
+//Check if password is correct
+TeacherSchema.methods.comparePassword = async function (teacherPassword) {
+  const teacher = this;
+  const isMatch = await bcrypt.compare(teacherPassword, teacher.password);
+
+  if (!isMatch) {
+    throw new Error("Invalid Credentials");
+  }
+
+  return isMatch;
+};
 
 module.exports = mongoose.model("Teacher", TeacherSchema);
