@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const Teacher = require("../models/Teacher");
+const { createTokenUser, attachCookiesToResponse } = require("../utils");
 
 //Admin Registration
 exports.registerTeacher = async (req, res) => {
@@ -12,14 +13,17 @@ exports.registerTeacher = async (req, res) => {
     throw new CustomError.BadRequestError("Email is already registered");
   }
 
-  const teacher = await Teacher.create({
+  const user = await Teacher.create({
     first_name,
     middle_name,
     last_name,
     email,
     password,
   });
-  res.status(StatusCodes.OK).json({ data: teacher });
+
+  const tokenUser = createTokenUser(user);
+  attachCookiesToResponse({ res, user: tokenUser });
+  res.status(StatusCodes.OK).json({ data: tokenUser });
 };
 
 exports.loginTeacher = async (req, res) => {
@@ -28,14 +32,16 @@ exports.loginTeacher = async (req, res) => {
   if (!email || !password) {
     throw new CustomError.BadRequestError("Please provide email and password");
   }
-  const teacher = await Teacher.findOne({ email });
+  const user = await Teacher.findOne({ email });
 
-  if (!teacher) throw new CustomError.BadRequestError("Not Found");
+  if (!user) throw new CustomError.BadRequestError("Not Found");
 
-  const passwordIsCorrect = await teacher.comparePassword(password);
+  const passwordIsCorrect = await user.comparePassword(password);
 
   if (!passwordIsCorrect) {
     throw new CustomError.BadRequestError("Invalid Credentials");
   }
-  res.status(StatusCodes.OK).json({ data: teacher });
+  const tokenUser = createTokenUser(user);
+  attachCookiesToResponse({ res, user: tokenUser });
+  res.status(StatusCodes.OK).json({ data: tokenUser });
 };

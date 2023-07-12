@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
-const { CustomError } = require("../errors");
+const CustomError = require("../errors");
 const Student = require("../models/Student");
+const { createTokenUser, attachCookiesToResponse } = require("../utils");
 
 exports.registerStudent = async (req, res) => {
   const { first_name, middle_name, last_name, email, password } = req.body;
@@ -8,14 +9,16 @@ exports.registerStudent = async (req, res) => {
   if (alreadyRegistered) {
     throw new CustomError.BadRequestError("Email already registered");
   }
-  const student = await Student.create({
+  const user = await Student.create({
     first_name,
     middle_name,
     last_name,
     email,
     password,
   });
-  res.status(StatusCodes.OK).json({ data: student });
+  const tokenUser = createTokenUser(user);
+  attachCookiesToResponse({ res, user: tokenUser });
+  res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 
 exports.loginStudent = async (req, res) => {
@@ -24,15 +27,18 @@ exports.loginStudent = async (req, res) => {
     throw new CustomError.BadRequestError("Please provide email and password");
   }
 
-  const student = await Student.findOne({ email });
-  if (!student) {
+  const user = await Student.findOne({ email });
+  if (!user) {
     throw new CustomError.BadRequestError("Student not found");
   }
 
-  const passwordIsCorrect = await student.comparePassword(password);
+  const passwordIsCorrect = await user.comparePassword(password);
 
   if (!passwordIsCorrect) {
     throw new CustomError.BadRequestError("Invalid Credentials");
   }
-  res.status(StatusCodes.OK).json({ data: student });
+
+  const tokenUser = createTokenUser(user);
+  attachCookiesToResponse({ res, user: tokenUser });
+  res.status(StatusCodes.OK).json({ data: tokenUser });
 };
