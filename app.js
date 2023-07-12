@@ -22,6 +22,7 @@ const connectDB = require("./db/connect");
 //Routers
 const adminRouter = require("./routes/adminRouter");
 const teacherRouter = require("./routes/teacherRouter");
+const studentRouter = require("./routes/studentRouter");
 
 //NotFound and ErrorHandler Middlewares
 const notFoundMiddleware = require("./middlewares/not-found");
@@ -48,6 +49,7 @@ app.use(fileUpload({ useTempFiles: true }));
 //Setup Routers
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/teacher", teacherRouter);
+app.use("/api/v1/student", studentRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
