@@ -1,5 +1,6 @@
 require("dotenv").config();
 const https = require("https");
+const Student = require("../models/Student");
 
 const payStack = {
   acceptPayment: async (req, res) => {
@@ -28,8 +29,15 @@ const payStack = {
           apiRes.on("data", (chunk) => {
             data += chunk;
           });
-          apiRes.on("end", () => {
-            console.log(JSON.parse(data));
+          apiRes.on("end", async () => {
+            let result = JSON.parse(data);
+            let userAccessCode = result.data.access_code;
+            const student = await Student.findOne({ email });
+            student.accessCode = [];
+            student.accessCode.push(userAccessCode);
+            await student.save();
+            console.log(student);
+            console.log(userAccessCode);
             return res.status(200).json(data);
           });
         })

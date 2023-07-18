@@ -37,6 +37,10 @@ const StudentSchema = new mongoose.Schema(
       type: String,
       default: "student",
     },
+    accessCode: {
+      type: Array,
+      default: [],
+    },
   },
   { timestamps: true }
 );
