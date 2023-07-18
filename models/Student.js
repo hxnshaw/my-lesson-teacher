@@ -26,6 +26,11 @@ const StudentSchema = new mongoose.Schema(
         validator: validator.isEmail,
         message: "Please provide a valid email address",
       },
+      phone_number: {
+        type: String,
+        required: [true, "Please provide a valid phone number"],
+        trim: true,
+      },
     },
     password: {
       type: String,
