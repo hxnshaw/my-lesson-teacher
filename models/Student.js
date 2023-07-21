@@ -42,7 +42,7 @@ const StudentSchema = new mongoose.Schema(
       type: String,
       default: "student",
     },
-    accessCode: {
+    referenceCode: {
       type: Array,
       default: [],
     },

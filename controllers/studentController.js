@@ -4,7 +4,8 @@ const Student = require("../models/Student");
 const { createTokenUser, attachCookiesToResponse } = require("../utils");
 
 exports.registerStudent = async (req, res) => {
-  const { first_name, middle_name, last_name, email, password } = req.body;
+  const { first_name, middle_name, last_name, email, password, phone_number } =
+    req.body;
   const alreadyRegistered = await Student.findOne({ email });
   if (alreadyRegistered) {
     throw new CustomError.BadRequestError("Email already registered");
@@ -15,6 +16,7 @@ exports.registerStudent = async (req, res) => {
     last_name,
     email,
     password,
+    phone_number,
   });
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });

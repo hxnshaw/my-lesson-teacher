@@ -9,10 +9,11 @@ const authenticateUser = async (req, res, next) => {
   }
 
   try {
-    const { first_name, last_name, userId, role, email } = isValidToken({
-      token,
-    });
-    req.user = { first_name, last_name, userId, role, email };
+    const { first_name, last_name, userId, role, email, phone_number } =
+      isValidToken({
+        token,
+      });
+    req.user = { first_name, last_name, userId, role, email, phone_number };
     next();
   } catch (error) {
     throw new CustomError.UnauthenticatedError("INVALID AUTHENTICATION");

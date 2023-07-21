@@ -5,9 +5,15 @@ const Student = require("../models/Student");
 const payStack = {
   acceptPayment: async (req, res) => {
     try {
+      const first_name = req.body.first_name;
+      const last_name = req.body.last_name;
       const email = req.body.email;
+      const phone_number = req.body.phone_number;
       const params = JSON.stringify({
+        first_name: first_name,
+        last_name: last_name,
         email: email,
+        phone_number: phone_number,
         amount: 25000 * 100,
         plan: process.env.PAYSTACK_SUBSCRIPTION_PLAN,
       });
@@ -31,13 +37,13 @@ const payStack = {
           });
           apiRes.on("end", async () => {
             let result = JSON.parse(data);
-            let userAccessCode = result.data.access_code;
+            let userReferenceCode = result.data.reference;
             const student = await Student.findOne({ email });
-            student.accessCode = [];
-            student.accessCode.push(userAccessCode);
+            student.referenceCode = [];
+            student.referenceCode.push(userReferenceCode);
             await student.save();
             console.log(student);
-            console.log(userAccessCode);
+            console.log(userReferenceCode);
             return res.status(200).json(data);
           });
         })
