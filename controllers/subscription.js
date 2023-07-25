@@ -5,18 +5,20 @@ const Student = require("../models/Student");
 const payStack = {
   acceptPayment: async (req, res) => {
     try {
-      const first_name = req.body.first_name;
-      const last_name = req.body.last_name;
       const email = req.body.email;
-      const phone_number = req.body.phone_number;
+      const metadata = {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        phone_number: req.body.phone_number,
+      };
+
       const params = JSON.stringify({
-        first_name: first_name,
-        last_name: last_name,
         email: email,
-        phone_number: phone_number,
-        amount: 25000 * 100,
+        amount: 2000 * 100,
         plan: process.env.PAYSTACK_SUBSCRIPTION_PLAN,
+        metadata: metadata,
       });
+
       //options
       const options = {
         hostname: "api.paystack.co",
