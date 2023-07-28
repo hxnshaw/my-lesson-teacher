@@ -87,7 +87,7 @@ app.get(
 
 // Call back route
 app.get(
-  "/google/callback",
+  "/auth/google/callback",
   passport.authenticate("google", {
     failureRedirect: "/failed",
   }),
