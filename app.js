@@ -3,6 +3,9 @@ require("dotenv").config();
 //Express
 const express = require("express");
 const app = express();
+const passport = require("passport");
+const session = require("express-session");
+require("./google-auth/passport");
 
 //Packages
 const morgan = require("morgan");
@@ -47,6 +50,78 @@ app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET_TOKEN));
 app.use(fileUpload({ useTempFiles: true }));
 
+//GOOGLE AUTH
+// express session
+app.use(
+  session({
+    secret: process.env.secret,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Middleware used in protected routes to check if the user has been authenticated
+const isLoggedIn = (req, res, next) => {
+  if (req.user) {
+    next();
+  } else {
+    res.sendStatus(401);
+  }
+};
+
+// Base route
+app.get("/home", (req, res) => {
+  res.send("Home Page");
+});
+
+// Google Auth consent screen route
+app.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["email", "profile"],
+  })
+);
+
+// Call back route
+app.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/failed",
+  }),
+  function (req, res) {
+    res.redirect("/success");
+  }
+);
+
+// failed route if the authentication fails
+app.get("/failed", (req, res) => {
+  console.log("User is not authenticated");
+  res.send("Failed");
+});
+
+// Success route if the authentication is successful
+app.get("/success", isLoggedIn, (req, res) => {
+  console.log("You are logged in");
+  res.send(`Welcome ${req.user.displayName}`);
+});
+
+// Route that logs out the authenticated user
+app.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.log("Error while destroying session:", err);
+    } else {
+      req.logout(() => {
+        console.log("You are logged out");
+        res.redirect("/home");
+      });
+    }
+  });
+});
+
 //Setup Routers
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/teacher", teacherRouter);
@@ -55,6 +130,7 @@ app.use("/api/v1/subcribe", subscriptionRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
+
 const port = process.env.PORT || 2023;
 
 const start = async () => {
