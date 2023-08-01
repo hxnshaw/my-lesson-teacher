@@ -6,6 +6,7 @@ const app = express();
 const passport = require("passport");
 const session = require("express-session");
 require("./google-auth/passport");
+const Student = require("./models/Student");
 
 //Packages
 const morgan = require("morgan");
@@ -72,6 +73,20 @@ const isLoggedIn = (req, res, next) => {
   }
 };
 
+const userFound = async (req, res, next) => {
+  try {
+    const user = await Student.findOne({ email: req.user.emails[0].value });
+    if (!user) {
+      res.redirect("/failed");
+      // res.json({ msg: "user not found" });
+    }
+    // res.status(200).json({ data: user });
+    next();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 // Base route
 app.get("/home", (req, res) => {
   res.send("Home Page");
@@ -103,7 +118,7 @@ app.get("/failed", (req, res) => {
 });
 
 // Success route if the authentication is successful
-app.get("/success", isLoggedIn, (req, res) => {
+app.get("/success", isLoggedIn, userFound, (req, res) => {
   console.log("You are logged in");
   res.send(`Welcome ${req.user.displayName}`);
 });
