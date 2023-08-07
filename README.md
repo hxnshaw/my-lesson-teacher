@@ -1,0 +1,3 @@
+# my-lesson-teacher
+A learning platform for software developers...
+//Work in progress
