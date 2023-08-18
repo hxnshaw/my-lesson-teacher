@@ -84,10 +84,32 @@ const deleteTutorial = async (req, res) => {
   }
 };
 
+const uploadVideo = async (req, res) => {
+  try {
+    const result = await cloudinary.uploader.upload(
+      req.files.video.tempFilePath,
+      {
+        use_filename: true,
+        folder: "lesson-teacher",
+        resource_type: "video",
+      }
+    );
+    fs.unlinkSync(req.files.video.tempFilePath);
+    return res
+      .status(StatusCodes.OK)
+      .json({ video: { src: result.secure_url } });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
+
 module.exports = {
   createTutorial,
   getSingleTutorial,
   getAllTutorials,
   updateTutorial,
   deleteTutorial,
+  uploadVideo,
 };

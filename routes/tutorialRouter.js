@@ -7,9 +7,12 @@ const {
   getAllTutorials,
   updateTutorial,
   deleteTutorial,
+  uploadVideo,
 } = require("../controllers/tutorialController");
 
 router.route("/").post(authenticateUser, createTutorial).get(getAllTutorials);
+
+router.route("/upload-video").post(authenticateUser, uploadVideo);
 
 router
   .route("/:id")
