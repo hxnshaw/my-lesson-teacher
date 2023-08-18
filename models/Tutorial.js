@@ -17,11 +17,11 @@ const TutorialSchema = new mongoose.Schema(
     video: {
       type: String,
       required: [true, "PLEASE PROVIDE A VIDEO FOR THE TUTORIAL"],
+      default: "/uploads/blogger.jpeg",
     },
     tutor: {
       type: mongoose.Types.ObjectId,
       ref: "Teacher",
-      required: true,
     },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
