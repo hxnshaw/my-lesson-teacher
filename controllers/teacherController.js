@@ -57,3 +57,20 @@ exports.loginTeacher = async (req, res) => {
       .json({ error: error.message });
   }
 };
+
+exports.getSingleTeacher = async (req, res) => {
+  const { id: teacherId } = req.params;
+  try {
+    const teacher = await Teacher.findOne({ _id: teacherId }).select(
+      "-password"
+    );
+    if (!teacher) {
+      throw new CustomError.NotFoundError(`Teacher Not Found`);
+    }
+    res.status(StatusCodes.OK).json({ data: teacher });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};

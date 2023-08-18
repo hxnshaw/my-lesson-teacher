@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const Admin = require("../models/Admin");
+const { createTokenUser, attachCookiesToResponse } = require("../utils");
 
 //Admin Registration
 exports.registerAdmin = async (req, res) => {
@@ -12,8 +13,10 @@ exports.registerAdmin = async (req, res) => {
       throw new CustomError.BadRequestError("Email is already registered");
     }
 
-    const admin = await Admin.create({ name, email, password });
-    res.status(StatusCodes.OK).json({ data: admin });
+    const user = await Admin.create({ name, email, password });
+    const tokenUser = createTokenUser(user);
+    attachCookiesToResponse({ res, user: tokenUser });
+    res.status(StatusCodes.OK).json({ user: tokenUser });
   } catch (error) {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -29,16 +32,18 @@ exports.loginAdmin = async (req, res) => {
         "Please provide email and password"
       );
     }
-    const admin = await Admin.findOne({ email });
+    const user = await Admin.findOne({ email });
 
-    if (!admin) throw new CustomError.BadRequestError("Not Found");
+    if (!user) throw new CustomError.BadRequestError("Not Found");
 
-    const passwordIsCorrect = await admin.comparePassword(password);
+    const passwordIsCorrect = await user.comparePassword(password);
 
     if (!passwordIsCorrect) {
       throw new CustomError.BadRequestError("Invalid Credentials");
     }
-    res.status(StatusCodes.OK).json({ data: admin });
+    const tokenUser = createTokenUser(user);
+    attachCookiesToResponse({ res, user: tokenUser });
+    res.status(StatusCodes.OK).json({ user: tokenUser });
   } catch (error) {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
