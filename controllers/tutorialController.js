@@ -38,8 +38,14 @@ const getSingleTutorial = async (req, res) => {
 };
 
 const getAllTutorials = async (req, res) => {
-  const tutorials = await Tutorial.find({});
-  res.status(StatusCodes.OK).json({ tutorials });
+  try {
+    const tutorials = await Tutorial.find({});
+    res.status(StatusCodes.OK).json({ tutorials });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
 };
 
 const updateTutorial = async (req, res) => {

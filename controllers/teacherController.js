@@ -76,3 +76,17 @@ exports.getSingleTeacher = async (req, res) => {
       .json({ error: error.message });
   }
 };
+
+exports.getAllTeachers = async (req, res) => {
+  try {
+    const teachers = await Teacher.find({});
+    if (teachers == null) {
+      throw new CustomError.NotFoundError(`Teachers Not Found`);
+    }
+    res.status(StatusCodes.OK).json({ count: teachers.length, data: teachers });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
