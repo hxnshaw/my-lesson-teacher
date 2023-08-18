@@ -61,9 +61,11 @@ exports.loginTeacher = async (req, res) => {
 exports.getSingleTeacher = async (req, res) => {
   const { id: teacherId } = req.params;
   try {
-    const teacher = await Teacher.findOne({ _id: teacherId }).select(
-      "-password"
-    );
+    const teacher = await Teacher.findOne({ _id: teacherId })
+      .select("-password")
+      .populate({
+        path: "tutorial",
+      });
     if (!teacher) {
       throw new CustomError.NotFoundError(`Teacher Not Found`);
     }

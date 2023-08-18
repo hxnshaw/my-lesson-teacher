@@ -38,8 +38,14 @@ const TeacherSchema = new mongoose.Schema(
       default: "teacher",
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+TeacherSchema.virtual("tutorial", {
+  ref: "Tutorial",
+  localField: "_id",
+  foreignField: "tutor",
+});
 
 //Hash teacher Password
 TeacherSchema.pre("save", async function () {
