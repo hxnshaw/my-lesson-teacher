@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { authenticateUser } = require("../middlewares/authentication");
+const {
+  authenticateUser,
+  authorizePermissions,
+} = require("../middlewares/authentication");
 const {
   createTutorial,
   getSingleTutorial,
@@ -10,14 +13,35 @@ const {
   uploadVideo,
 } = require("../controllers/tutorialController");
 
-router.route("/").post(authenticateUser, createTutorial).get(getAllTutorials);
+router
+  .route("/")
+  .post(
+    authenticateUser,
+    authorizePermissions("admin", "teacher"),
+    createTutorial
+  )
+  .get(authenticateUser, getAllTutorials);
 
-router.route("/upload-video").post(authenticateUser, uploadVideo);
+router
+  .route("/upload-video")
+  .post(
+    authenticateUser,
+    authorizePermissions("admin", "teacher"),
+    uploadVideo
+  );
 
 router
   .route("/:id")
   .get(authenticateUser, getSingleTutorial)
-  .patch(authenticateUser, updateTutorial)
-  .delete(authenticateUser, deleteTutorial);
+  .patch(
+    authenticateUser,
+    authorizePermissions("admin", "teacher"),
+    updateTutorial
+  )
+  .delete(
+    authenticateUser,
+    authorizePermissions("admin", "teacher"),
+    deleteTutorial
+  );
 
 module.exports = router;
