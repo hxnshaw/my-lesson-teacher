@@ -58,3 +58,34 @@ exports.loginStudent = async (req, res) => {
       .json({ error: error.message });
   }
 };
+
+exports.getSingleStudent = async (req, res) => {
+  const { id: studentId } = req.params;
+  try {
+    const student = await Student.findOne({ _id: studentId }).select(
+      "-password"
+    );
+    if (!student) {
+      res.status(StatusCodes.NOT_FOUND).json({ message: "Student not found" });
+    }
+    res.status(StatusCodes.OK).json({ data: student });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
+
+exports.getAllStudents = async (req, res) => {
+  try {
+    const students = await Student.find({}).select("-password");
+    if (students === null) {
+      throw new CustomError.NotFoundError(`Students Not Found`);
+    }
+    res.status(StatusCodes.OK).json({ data: students });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};

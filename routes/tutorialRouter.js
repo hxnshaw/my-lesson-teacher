@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   authenticateUser,
   authorizePermissions,
+  studentHasSubscribed,
 } = require("../middlewares/authentication");
 const {
   createTutorial,
@@ -20,7 +21,7 @@ router
     authorizePermissions("admin", "teacher"),
     createTutorial
   )
-  .get(authenticateUser, getAllTutorials);
+  .get(authenticateUser, studentHasSubscribed(), getAllTutorials);
 
 router
   .route("/upload-video")
