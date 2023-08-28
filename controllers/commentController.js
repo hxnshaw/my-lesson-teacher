@@ -2,6 +2,7 @@ const Comment = require("../models/Comment");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const Tutorial = require("../models/Tutorial");
+const checkPermissions = require("../utils/checkPermissions");
 //const checkPermissions = require("../utils/checkPermissions");
 
 exports.createComment = async (req, res) => {
@@ -40,10 +41,23 @@ exports.getSingleComment = async (req, res) => {
   }
 };
 
-// exports.getAllComments = async (req, res) => {
-//     try {
-//         const comments = await Comment.find({}).populate("tutorial").populate({path: "user", select: "first_name last_name"})
-//     } catch (error) {
+exports.updateComment = async (req, res) => {
+  const { id: commentId } = req.params;
+  const { comment } = req.body;
+  try {
+    const userComment = await Comment.findOne({ _id: commentId });
 
-//     }
-// }
+    if (!userComment) {
+      throw new CustomError.NotFoundError("No comment found");
+    }
+    checkPermissions(req.user, userComment.user);
+
+    userComment.comment = comment;
+    await userComment.save();
+    res.status(StatusCodes.OK).json({ comment });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
