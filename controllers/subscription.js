@@ -1,6 +1,7 @@
 require("dotenv").config();
 const https = require("https");
 const Student = require("../models/Student");
+//var cron = require('node-cron');
 
 const payStack = {
   acceptPayment: async (req, res) => {
@@ -39,13 +40,16 @@ const payStack = {
           });
           apiRes.on("end", async () => {
             let result = JSON.parse(data);
-            let userReferenceCode = result.data.reference;
-            const student = await Student.findOne({ email });
-            student.referenceCode = [];
-            student.referenceCode.push(userReferenceCode);
-            await student.save();
-            console.log(student);
-            console.log(userReferenceCode);
+            // let userReferenceCode = result.data.reference;
+            // const student = await Student.findOne({ email });
+            // student.referenceCode = [];
+            // student.referenceCode.push(userReferenceCode);
+            // //     cron.schedule(`${M} ${H} */${Int} * *`, () => {
+            // //       //Your Code
+            // //  })
+            // await student.save();
+            console.log(result);
+            //console.log(userReferenceCode);
             return res.status(200).json(data);
           });
         })

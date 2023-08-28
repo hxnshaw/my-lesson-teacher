@@ -35,6 +35,7 @@ const teacherRouter = require("./routes/teacherRouter");
 const studentRouter = require("./routes/studentRouter");
 const subscriptionRouter = require("./routes/subscription");
 const tutorialRouter = require("./routes/tutorialRouter");
+const commentRouter = require("./routes/commentRouter");
 
 //NotFound and ErrorHandler Middlewares
 const notFoundMiddleware = require("./middlewares/not-found");
@@ -150,6 +151,7 @@ app.use("/api/v1/teacher", teacherRouter);
 app.use("/api/v1/student", studentRouter);
 app.use("/api/v1/subcribe", subscriptionRouter);
 app.use("/api/v1/tutorial", tutorialRouter);
+app.use("/api/v1/comment", commentRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
