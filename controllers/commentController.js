@@ -61,3 +61,20 @@ exports.updateComment = async (req, res) => {
       .json({ error: error.message });
   }
 };
+
+exports.deleteComment = async (req, res) => {
+  const { id: commentId } = req.params;
+  try {
+    const comment = await Comment.findOne({ _id: commentId });
+    if (!comment) {
+      throw new CustomError.NotFoundError("Comment Not Found");
+    }
+    checkPermissions(req.user, comment.user);
+    await Comment.deleteOne({ _id: commentId });
+    res.status(StatusCodes.OK).json({ message: "Comment Deleted" });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
