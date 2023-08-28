@@ -39,3 +39,11 @@ exports.getSingleComment = async (req, res) => {
       .json({ error: error.message });
   }
 };
+
+// exports.getAllComments = async (req, res) => {
+//     try {
+//         const comments = await Comment.find({}).populate("tutorial").populate({path: "user", select: "first_name last_name"})
+//     } catch (error) {
+
+//     }
+// }

@@ -24,7 +24,9 @@ const createTutorial = async (req, res) => {
 const getSingleTutorial = async (req, res) => {
   try {
     const { id: tutorialId } = req.params;
-    const tutorial = await Tutorial.findOne({ _id: tutorialId });
+    const tutorial = await Tutorial.findOne({ _id: tutorialId }).populate({
+      path: "comment",
+    });
     console.log(tutorialId);
     if (!tutorial) {
       throw new CustomError.NotFoundError(`Tutorial Not Found`);
@@ -39,7 +41,9 @@ const getSingleTutorial = async (req, res) => {
 
 const getAllTutorials = async (req, res) => {
   try {
-    const tutorials = await Tutorial.find({});
+    const tutorials = await Tutorial.find({})
+      .populate("comment")
+      .populate({ path: "user", select: "first_name last_name" });
     res.status(StatusCodes.OK).json({ tutorials });
   } catch (error) {
     res
