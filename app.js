@@ -146,12 +146,12 @@ app.get("/logout", (req, res) => {
 });
 
 //Setup Routers
-app.use("/api/v1/admin", adminRouter);
-app.use("/api/v1/teacher", teacherRouter);
-app.use("/api/v1/student", studentRouter);
+app.use("/api/v1/admins", adminRouter);
+app.use("/api/v1/teachers", teacherRouter);
+app.use("/api/v1/students", studentRouter);
 app.use("/api/v1/subcribe", subscriptionRouter);
-app.use("/api/v1/tutorial", tutorialRouter);
-app.use("/api/v1/comment", commentRouter);
+app.use("/api/v1/tutorials", tutorialRouter);
+app.use("/api/v1/comments", commentRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
