@@ -34,6 +34,7 @@ const adminRouter = require("./routes/adminRouter");
 const teacherRouter = require("./routes/teacherRouter");
 const studentRouter = require("./routes/studentRouter");
 const subscriptionRouter = require("./routes/subscription");
+const verifyPaymentRouter = require("./routes/verifyPayment");
 const tutorialRouter = require("./routes/tutorialRouter");
 const commentRouter = require("./routes/commentRouter");
 
@@ -152,6 +153,7 @@ app.use("/api/v1/students", studentRouter);
 app.use("/api/v1/subcribe", subscriptionRouter);
 app.use("/api/v1/tutorials", tutorialRouter);
 app.use("/api/v1/comments", commentRouter);
+app.use("/api/v1", verifyPaymentRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

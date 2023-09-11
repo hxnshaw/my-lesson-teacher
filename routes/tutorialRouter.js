@@ -33,7 +33,7 @@ router
 
 router
   .route("/:id")
-  .get(authenticateUser, getSingleTutorial)
+  .get(authenticateUser, studentHasSubscribed(), getSingleTutorial)
   .patch(
     authenticateUser,
     authorizePermissions("admin", "teacher"),
