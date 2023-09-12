@@ -3,6 +3,10 @@
 A learning platform for software developers, equipped with video tutorials and access to every learning material after they subscribe.
 Subscription to the lesson-teacher plan is made possible via Paystack Subscription API.
 
+# AUTHENTICATION AND AUTHORIZATION
+The lesson-teacher app makes use of google oauth to authenticate users. Only authorized users are granted access to some routes. For example, only the admins can view all the users that are registered.
+
+
 # FEATURES
 * Users can register, Login and logout of their accounts as either students or tutors.
 * Only subscribed students can view the tutorials.
