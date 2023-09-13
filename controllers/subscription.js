@@ -2,7 +2,7 @@ require("dotenv").config();
 const https = require("https");
 const axios = require("axios");
 const Student = require("../models/Student");
-//var cron = require('node-cron');
+const calculateNextPayment = require("../utils/subDueDate");
 
 const payStack = {
   acceptPayment: async (req, res) => {
@@ -89,9 +89,17 @@ const payStack = {
           student.referenceCode = [];
           res.status(200).json(result);
           if (result.data.status === "success") {
+            let date = Date.now();
+            let nextpaymentDate;
+            //Get the date of the next payment(subscription)
+            nextpaymentDate = await calculateNextPayment(date);
+            //save the reference code to the user
             student.referenceCode.push(userReferenceCode);
+            student.next_payment_date = nextpaymentDate;
           } else {
-            return res.status(401).json({ message: "Transaction Failed" });
+            return res
+              .status(401)
+              .json({ message: "Oops! Transaction Failed" });
           }
           await student.save();
         });
