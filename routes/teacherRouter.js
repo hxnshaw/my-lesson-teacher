@@ -10,10 +10,14 @@ const {
   loginTeacher,
   getSingleTeacher,
   getAllTeachers,
+  getTeacherProfile,
 } = require("../controllers/teacherController");
 
 router.post("/register", registerTeacher);
+
 router.post("/login", loginTeacher);
+
+router.route("/profile").get(authenticateUser, getTeacherProfile);
 
 router
   .route("/:id")
