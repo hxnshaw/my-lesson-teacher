@@ -11,6 +11,7 @@ const {
   getAllStudents,
   getUserProfile,
   updateStudentProfile,
+  updateStudentPassword,
 } = require("../controllers/studentController");
 
 router.post("/register", registerStudent);
@@ -19,6 +20,9 @@ router.route("/profile").get(authenticateUser, getUserProfile);
 router
   .route("/profile/update-profile")
   .patch(authenticateUser, updateStudentProfile);
+router
+  .route("/profile/update-password")
+  .patch(authenticateUser, updateStudentPassword);
 
 router
   .route("/:id")

@@ -133,3 +133,31 @@ exports.updateStudentProfile = async (req, res) => {
       .json({ error: error.message });
   }
 };
+
+exports.updateStudentPassword = async (req, res) => {
+  const { password, newPassword } = req.body;
+  try {
+    if (!password || !newPassword) {
+      throw new CustomError.BadRequestError(
+        "Oops! Please provide valid credentials"
+      );
+    }
+    const user = await Student.findOne({ _id: req.user.userId });
+    if (!user) {
+      throw new CustomError.NotFoundError(`Student Not Found`);
+    }
+
+    const passwordIsCorrect = await user.comparePassword(password);
+    if (!passwordIsCorrect) {
+      throw new CustomError.BadRequestError("Invalid Credentials");
+    }
+
+    user.password = newPassword;
+    await user.save();
+    res.status(StatusCodes.OK).json({ msg: "new password saved" });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
