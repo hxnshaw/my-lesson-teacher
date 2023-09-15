@@ -10,11 +10,15 @@ const {
   getSingleStudent,
   getAllStudents,
   getUserProfile,
+  updateStudentProfile,
 } = require("../controllers/studentController");
 
 router.post("/register", registerStudent);
 router.post("/login", loginStudent);
 router.route("/profile").get(authenticateUser, getUserProfile);
+router
+  .route("/profile/update-profile")
+  .patch(authenticateUser, updateStudentProfile);
 
 router
   .route("/:id")
