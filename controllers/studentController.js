@@ -89,3 +89,21 @@ exports.getAllStudents = async (req, res) => {
       .json({ error: error.message });
   }
 };
+
+exports.getUserProfile = async (req, res) => {
+  const userId = req.user.userId;
+  try {
+    const user = await Student.findOne({ _id: userId });
+
+    if (!user) {
+      throw new CustomError.NotFoundError(`Student Not Found`);
+    }
+    const tokenUser = createTokenUser(user);
+    attachCookiesToResponse({ res, user: tokenUser });
+    res.status(StatusCodes.OK).json({ data: tokenUser });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
