@@ -64,7 +64,7 @@ exports.getSingleStudent = async (req, res) => {
   try {
     const user = await Student.findOne({ _id: studentId }).select("-password");
     if (!user) {
-      res.status(StatusCodes.NOT_FOUND).json({ message: "Student not found" });
+      throw new CustomError.NotFoundError(`Student Not Found`);
     }
     res.status(StatusCodes.OK).json({ data: user });
   } catch (error) {
@@ -155,6 +155,25 @@ exports.updateStudentPassword = async (req, res) => {
     user.password = newPassword;
     await user.save();
     res.status(StatusCodes.OK).json({ msg: "new password saved" });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
+
+exports.deleteStudentAccount = async (req, res) => {
+  try {
+    const student = await Student.findOne({ _id: req.user.userId });
+    if (!student) {
+      throw new CustomError.NotFoundError(`Student Not Found`);
+    }
+    res.cookie("token", "deleteUser", {
+      httpOnly: true,
+      expiresIn: new Date(Date.now()),
+    });
+    await Student.deleteOne({ _id: req.user.userId });
+    res.status(StatusCodes.OK).json({ msg: "Account Deleted" });
   } catch (error) {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
